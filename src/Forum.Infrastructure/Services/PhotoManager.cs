@@ -1,0 +1,38 @@
+﻿using Forum.Application.Services;
+using Microsoft.AspNetCore.Http;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.Processing;
+
+namespace Forum.Infrastructure.Services
+{
+    public class PhotoManager : IPhotoManager
+    {
+        public void Delete(string path, CancellationToken cancellationToken = default)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
+        public async Task<Byte[]> ResizeAsync(string path, int width, int height, CancellationToken cancellationToken = default)
+        {
+            using var image = await Image.LoadAsync(path, cancellationToken);
+
+            image.Mutate(b => b.Resize(width, height));
+            using (var ms = new MemoryStream())
+            {
+                var encoder = image.DetectEncoder(path);
+                image.Save(ms, encoder);
+                return ms.ToArray();
+            }
+        }
+
+        public async Task SaveAsync(IFormFile file, String path, CancellationToken cancellationToken = default)
+        {
+            var image = await Image.LoadAsync(file.OpenReadStream(), cancellationToken);
+            await image.SaveAsync(path, cancellationToken);
+        }
+    }
+}

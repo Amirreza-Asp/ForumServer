@@ -1,4 +1,5 @@
 ﻿using Forum.Application.Models;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace Forum.Application.Services
@@ -9,11 +10,17 @@ namespace Forum.Application.Services
             Expression<Func<TEntity, bool>> filters = null,
             CancellationToken cancellationToken = default) where TDto : class;
 
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null,
+                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                CancellationToken cancellationToken = default,
+                bool isTracking = false);
+
 
         Task<ListActionResult<TDto>> GetAllAsync<TDto>(
            GridQuery query,
            CancellationToken cancellationToken = default) where TDto : class;
 
+        Task<List<TDto>> GetAllAsync<TDto>(CancellationToken cancellationToken);
 
         void Create(TEntity entity);
         void Update(TEntity entity);

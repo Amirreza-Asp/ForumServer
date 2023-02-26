@@ -1,8 +1,10 @@
 ﻿using Forum.Application.Services;
 using Forum.Persistence.Services;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Forum.Persistence
 {
@@ -13,11 +15,12 @@ namespace Forum.Persistence
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddMediatR(Assembly.GetExecutingAssembly());
 
             return services;
         }

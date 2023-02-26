@@ -3,12 +3,14 @@ using Forum.Application.Services;
 using Forum.Domain.Dtoes.Communities;
 using Forum.Domain.Entities;
 using Forum.Endpoint.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forum.Endpoint.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CommunityController : ControllerBase
     {
         private readonly IRepository<Community> _communityRepository;
@@ -35,14 +37,14 @@ namespace Forum.Endpoint.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Community community, CancellationToken cancellationToken)
         {
-            return await RequestHandler.Handle(_communityRepository, _communityRepository.Create, community, cancellationToken);
+            return await RequestHandler.HandleAsync(_communityRepository, _communityRepository.Create, community, cancellationToken);
         }
 
         [Route("Update")]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Community community, CancellationToken cancellationToken)
         {
-            return await RequestHandler.Handle(_communityRepository, _communityRepository.Update, community, cancellationToken);
+            return await RequestHandler.HandleAsync(_communityRepository, _communityRepository.Update, community, cancellationToken);
         }
 
         [HttpDelete("Remove/{id}")]

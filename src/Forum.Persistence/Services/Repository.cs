@@ -4,6 +4,7 @@ using Forum.Application.Models;
 using Forum.Application.Services;
 using Forum.Application.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace Forum.Persistence.Services
@@ -27,7 +28,25 @@ namespace Forum.Persistence.Services
                 await _dbSet
                     .Where(filters)
                     .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(cancellationToken);
+        }
+
+
+        public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null, CancellationToken cancellationToken = default, bool isTracking = false)
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            if (filter != null)
+                query = query.Where(filter);
+
+            if (include != null)
+                query = include(query);
+
+            if (!isTracking)
+                query = query.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<ListActionResult<TDto>> GetAllAsync<TDto>(GridQuery query, CancellationToken cancellationToken = default) where TDto : class
@@ -64,6 +83,7 @@ namespace Forum.Persistence.Services
                 .ProjectTo<TDto>(_mapper.ConfigurationProvider)
                 .Skip((query.Page - 1) * query.Size)
                 .Take(query.Size)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             actionResult.Data = result.ToList();
@@ -102,6 +122,14 @@ namespace Forum.Persistence.Services
         public async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
         {
             return await _context.SaveChangesAsync(cancellationToken) > 0;
+        }
+
+        public async Task<List<TDto>> GetAllAsync<TDto>(CancellationToken cancellationToken)
+        {
+            return
+                await _context.Roles
+                    .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken);
         }
     }
 }

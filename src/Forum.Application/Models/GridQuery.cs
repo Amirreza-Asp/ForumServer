@@ -4,14 +4,7 @@
     {
         public int Size { get; set; } = 10;
         public int Page { get; set; } = 1;
-        public SortModel[] Sorted { get; set; } = new SortModel[]
-        {
-            new SortModel
-            {
-                column = "CreateAt",
-                desc = true
-            }
-        };
+        public SortModel[] Sorted { get; set; } = new SortModel[] { };
         public FilterModel[] Filters { get; set; } = new FilterModel[] { };
     }
 
