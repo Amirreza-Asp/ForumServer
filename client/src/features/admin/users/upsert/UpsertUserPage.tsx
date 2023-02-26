@@ -34,6 +34,7 @@ export default observer(function UpsertUserPage({ userName, query }: Props) {
       upsertLoading,
     },
   } = useStore();
+
   const [step, setStep] = useState<
     "step1" | "step2" | "step3" | "step4" | "step5"
   >("step1");
