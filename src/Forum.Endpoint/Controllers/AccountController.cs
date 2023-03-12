@@ -9,7 +9,6 @@ using Forum.Endpoint.Utility;
 using Forum.Infrastructure.Services;
 using Forum.Persistence.Features.Commands.Account.AddImage;
 using Forum.Persistence.Features.Commands.Account.Register;
-using Forum.Persistence.Features.Queries.Account.AllImages;
 using Forum.Persistence.Features.Queries.Account.Login;
 using Forum.Persistence.Features.Queries.Account.RefreshTokenLogin;
 using Microsoft.AspNetCore.Authorization;
@@ -101,13 +100,6 @@ namespace Forum.Endpoint.Controllers
             return File(image, $"image/{extension.Substring(1)}");
         }
 
-        [Route("AllImages")]
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetAllImages([FromQuery] AllImagesQuery query, CancellationToken cancellationToken)
-        {
-            return await RequestHandler.HandleAsync(Mediator, query, cancellationToken);
-        }
         #endregion
 
 

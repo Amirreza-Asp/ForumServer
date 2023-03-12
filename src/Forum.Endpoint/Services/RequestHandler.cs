@@ -1,4 +1,5 @@
 ﻿using Forum.Application.Services;
+using Forum.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,9 +51,17 @@ namespace Forum.Endpoint.Utility
                 await mediator.Send(request, cancellationToken);
                 return new OkResult();
             }
-            catch (Exception ex)
+            catch (AppException ex)
             {
                 return new BadRequestObjectResult(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(new
+                {
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace
+                });
             }
         }
 
@@ -63,9 +72,17 @@ namespace Forum.Endpoint.Utility
                 var result = await mediator.Send(request, cancellationToken);
                 return new OkObjectResult(result);
             }
-            catch (Exception ex)
+            catch (AppException ex)
             {
                 return new BadRequestObjectResult(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(new
+                {
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace
+                });
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Forum.Domain.Entities.Account;
+using Forum.Domain.Exceptions;
 using Forum.Persistence.Features.Notifications.Users.ChangePassowrd;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -30,7 +31,7 @@ namespace Forum.Persistence.Features.Commands.Users.Update
                     .FirstOrDefaultAsync(cancellationToken);
 
             if (appUser == null)
-                throw new ApplicationException($"User not found");
+                throw new AppException($"User not found");
 
             appUser = request.UpdateUser(appUser);
 

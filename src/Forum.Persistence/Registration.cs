@@ -15,6 +15,7 @@ namespace Forum.Persistence
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                //options.UseInMemoryDatabase("Forum");
             });
 
             services.AddScoped<IDbInitializer, DbInitializer>();

@@ -124,10 +124,17 @@ namespace Forum.Persistence.Services
             return await _context.SaveChangesAsync(cancellationToken) > 0;
         }
 
-        public async Task<List<TDto>> GetAllAsync<TDto>(CancellationToken cancellationToken)
+        public async Task<List<TDto>> GetAllAsync<TDto>(Expression<Func<TEntity, bool>> filters = null, CancellationToken cancellationToken = default)
         {
+            if (filters == null)
+                return
+                await _dbSet
+                    .ProjectTo<TDto>(_mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken);
+
             return
-                await _context.Roles
+                await _dbSet
+                    .Where(filters)
                     .ProjectTo<TDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
         }

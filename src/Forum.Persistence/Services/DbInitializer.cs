@@ -2,6 +2,7 @@
 using Forum.Domain;
 using Forum.Domain.Entities;
 using Forum.Domain.Entities.Account;
+using Forum.Domain.Entities.Communications;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,16 +34,19 @@ namespace Forum.Persistence.Services
             {
             }
 
-            if (!await _context.Communities.AnyAsync())
-            {
-                _context.Communities.AddRange(Communities);
-            }
+
+
+            #region Account
 
             if (!await _context.Users.AnyAsync())
             {
-                foreach (var user in Users)
+                for (int i = 0; i < 52; i++)
                 {
-                    await _userManager.CreateAsync(user, "Pa$$w0rd");
+                    foreach (var user in Users)
+                    {
+                        user.UserName = user.UserName + i;
+                        await _userManager.CreateAsync(user, "Pa$$w0rd");
+                    }
                 }
             }
 
@@ -59,15 +63,78 @@ namespace Forum.Persistence.Services
                 foreach (var role in Roles)
                     await _roleManager.CreateAsync(role);
 
-                var user = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[0].UserName);
-                await _userManager.AddToRoleAsync(user, SD.AdminRole);
+                //var user = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[0].UserName);
+                //await _userManager.AddToRoleAsync(user, SD.AdminRole);
 
-                var user2 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[1].UserName);
-                await _userManager.AddToRoleAsync(user2, SD.SuperManagerRole);
+                //var user2 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[1].UserName);
+                //await _userManager.AddToRoleAsync(user2, SD.SuperManagerRole);
 
-                var user3 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[2].UserName);
-                await _userManager.AddToRoleAsync(user3, SD.UserRole);
+                //var user3 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[2].UserName);
+                //await _userManager.AddToRoleAsync(user3, SD.UserRole);
+
+                var users = await _context.Users.ToListAsync();
+                foreach (var user in users)
+                    await _userManager.AddToRoleAsync(user, SD.AdminRole);
             }
+
+            #endregion
+
+            #region Communitications
+
+            if (!await _context.Communities.AnyAsync())
+            {
+                _context.Communities.AddRange(Communities);
+            }
+
+            if (!await _context.Topics.AnyAsync())
+            {
+                var user = _context.Users.FirstOrDefault(b => b.UserName == "Admin0");
+
+                var topic1 = new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Author = user,
+                    CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
+                    Like = 54,
+                    DisLike = 78,
+                    Title = "how to selling dead coin",
+                    View = 327
+                };
+                var topic2 = new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Author = user,
+                    CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
+                    Like = 700,
+                    DisLike = 543,
+                    Title = "when sell shit coin?",
+                    View = 516
+                };
+                var topic3 = new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Author = user,
+                    CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
+                    Like = 852,
+                    DisLike = 54,
+                    Title = "how long time need to become senior trader",
+                    View = 98
+                };
+                var topic4 = new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Author = user,
+                    CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
+                    Like = 925,
+                    DisLike = 20,
+                    Title = "trading on moon",
+                    View = 157
+                };
+
+                _context.Topics.AddRange(topic1, topic2, topic3, topic4);
+            }
+
+            #endregion
 
             await _context.SaveChangesAsync();
         }
@@ -76,10 +143,45 @@ namespace Forum.Persistence.Services
         private List<Community> Communities =>
             new List<Community>
             {
-                new Community{Title = "Sport" ,
-                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" },
-                new Community{Title = "Sience" , Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" },
-                new Community{Title = "Culture" , Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" },
+                new Community{
+                    Id = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
+                    Title = "Trading hours" ,
+                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta",
+                    Image = "aron-visuals-BXOXnQ26B7o-unsplash.jpg",
+                    Icon="icons8-hourglass-64.png"},
+                new Community{
+                    Title = "Profit" ,
+                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" ,
+                    Image = "jonathan-borba-nRJTf6v9p5Q-unsplash.jpg",
+                    Icon = "icons8-duration-finance-64.png"
+                },
+                new Community{
+                    Title = "News" ,
+                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" ,
+                    Image = "markus-spiske-2G8mnFvH8xk-unsplash.jpg",
+                    Icon = "icons8-news-64.png"},
+                new Community{
+                    Title = "Destroy money" ,
+                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" ,
+                    Image = "max-saeling-9_OejvA7ooI-unsplash.jpg",
+                    Icon = "icons8-fire-64.png"},
+                new Community{
+                    Title = "AI" ,
+                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" ,
+                    Image = "michael-dziedzic-uZr0oWxrHYs-unsplash.jpg",
+                    Icon = "icons8-bot-64.png"},
+
+                new Community{
+                    Title = "World" ,
+                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" ,
+                    Image = "nasa-Q1p7bh3SHj8-unsplash.jpg",
+                    Icon = "icons8-earth-globe-64.png"},
+                new Community{
+                    Title = "Consultation" ,
+                    Description = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptatibus expedita accusamus et quia quae animi mollitia eaque qui soluta" ,
+                    Image = "priscilla-du-preez-XkKCui44iM0-unsplash.jpg",
+                    Icon = "icons8-genealogy-64.png"},
+
             };
 
         private List<AppUser> Users =>
@@ -96,7 +198,9 @@ namespace Forum.Persistence.Services
                      IsMale= true,
                      Photos = new List<UserPhoto>
                      {
-                         new UserPhoto{Id = Guid.NewGuid() , Url = "f6eaa1fb-4d06-400e-914f-7b41c6fc0918.jpg" , IsMain = true , Name = "Test.jpg"}
+                         new UserPhoto{Id = Guid.NewGuid() , Url = "content-img-02.jpg" , IsMain = true , Name = "Test.jpg"},
+                         new UserPhoto{Id = Guid.NewGuid() , Url = "full-bg-07-1.jpg" , IsMain = false , Name = "Test.jpg"},
+                         new UserPhoto{Id = Guid.NewGuid() , Url = "logo-01.jpg" , IsMain = false , Name = "Test.jpg"},
                      }
                 },
                 new AppUser{

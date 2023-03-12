@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Forum.Domain.Entities.Account;
+using Forum.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -25,7 +26,7 @@ namespace Forum.Persistence.Features.Commands.Users.Create
             if (!result.Succeeded)
             {
                 var errors = String.Join(',', result.Errors.Select(u => u.Description));
-                throw new ApplicationException(errors);
+                throw new AppException(errors);
             }
 
 
@@ -34,7 +35,7 @@ namespace Forum.Persistence.Features.Commands.Users.Create
             if (!roleResult.Succeeded)
             {
                 var errors = String.Join(',', roleResult.Errors.Select(u => u.Description));
-                throw new ApplicationException(errors);
+                throw new AppException(errors);
             }
 
             return Unit.Value;

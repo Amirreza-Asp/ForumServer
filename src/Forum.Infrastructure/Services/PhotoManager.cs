@@ -34,5 +34,11 @@ namespace Forum.Infrastructure.Services
             var image = await Image.LoadAsync(file.OpenReadStream(), cancellationToken);
             await image.SaveAsync(path, cancellationToken);
         }
+
+        public async Task SaveFromBase64Async(string base64File, string path, CancellationToken cancellationToken = default)
+        {
+            var bytes = Convert.FromBase64String(base64File);
+            await File.WriteAllBytesAsync(path, bytes, cancellationToken);
+        }
     }
 }

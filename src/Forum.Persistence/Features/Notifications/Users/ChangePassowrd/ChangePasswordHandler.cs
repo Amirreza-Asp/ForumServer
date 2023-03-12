@@ -1,4 +1,5 @@
 ﻿using Forum.Domain.Entities.Account;
+using Forum.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -23,7 +24,7 @@ namespace Forum.Persistence.Features.Notifications.Users.ChangePassowrd
                 if (!result.Succeeded)
                 {
                     String errors = String.Join('\n', result.Errors.Select(b => b.Description));
-                    throw new ApplicationException(errors);
+                    throw new AppException(errors);
                 }
             }
 

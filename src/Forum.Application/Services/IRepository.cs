@@ -20,7 +20,7 @@ namespace Forum.Application.Services
            GridQuery query,
            CancellationToken cancellationToken = default) where TDto : class;
 
-        Task<List<TDto>> GetAllAsync<TDto>(CancellationToken cancellationToken);
+        Task<List<TDto>> GetAllAsync<TDto>(Expression<Func<TEntity, bool>> filters = null, CancellationToken cancellationToken = default);
 
         void Create(TEntity entity);
         void Update(TEntity entity);

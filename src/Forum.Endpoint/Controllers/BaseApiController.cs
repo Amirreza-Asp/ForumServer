@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Forum.Endpoint.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class BaseApiController : ControllerBase
     {
         private IMediator _mediator;

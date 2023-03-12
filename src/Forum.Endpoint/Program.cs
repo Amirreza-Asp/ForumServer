@@ -54,19 +54,19 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3006", "http://localhost:3001");
+        policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
         //policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
     });
 });
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 var scoped = app.Services.CreateScope();
 var initializer = scoped.ServiceProvider.GetRequiredService<IDbInitializer>();

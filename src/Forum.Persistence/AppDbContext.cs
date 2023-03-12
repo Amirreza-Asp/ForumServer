@@ -1,7 +1,9 @@
 ﻿using Forum.Domain.Entities;
 using Forum.Domain.Entities.Account;
+using Forum.Domain.Entities.Communications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Forum.Persistence
 {
@@ -14,29 +16,14 @@ namespace Forum.Persistence
         public DbSet<Community> Communities { get; set; }
         public DbSet<UserPhoto> UserPhotos { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Topic> Topics { get; set; }
+        public DbSet<TopicFile> TopicFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            builder.Entity<RefreshToken>()
-                .HasOne(b => b.User)
-                .WithOne(b => b.RefreshToken)
-                .HasForeignKey<RefreshToken>(b => b.UserId);
-
-            builder.Entity<AppUser>()
-                .HasMany(b => b.UserRole)
-                .WithOne(b => b.User)
-                .HasForeignKey(b => b.UserId);
-
-            builder.Entity<AppRole>()
-                .HasMany(b => b.UserRole)
-                .WithOne(b => b.Role)
-                .HasForeignKey(b => b.RoleId);
-
-            builder.Entity<AppUser>()
-                .HasQueryFilter(b => b.IsDeleted == false);
-
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
+
     }
 }

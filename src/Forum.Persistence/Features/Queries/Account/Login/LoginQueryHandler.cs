@@ -1,10 +1,10 @@
 ﻿using Forum.Domain.Dtoes.Account;
 using Forum.Domain.Entities.Account;
+using Forum.Domain.Exceptions;
 using Forum.Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Authentication;
 
 namespace Forum.Persistence.Features.Queries.Account.Login
 {
@@ -32,7 +32,7 @@ namespace Forum.Persistence.Features.Queries.Account.Login
                     .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
-                throw new AuthenticationException("UserName is wrong");
+                throw new AppException("UserName is wrong");
 
 
 
@@ -60,7 +60,7 @@ namespace Forum.Persistence.Features.Queries.Account.Login
                 return UserResultDto.FromUser(user, TokenService.Create(user), refreshToken.Token, role.Name);
             }
 
-            throw new AuthenticationException("Password is wrong");
+            throw new AppException("Password is wrong");
         }
 
     }

@@ -1,6 +1,6 @@
 ﻿namespace Forum.Domain.Exceptions
 {
-    public class AuthenticationException : Exception
+    public class AuthenticationException : AppException
     {
         public AuthenticationException(string message) : base(message)
         {

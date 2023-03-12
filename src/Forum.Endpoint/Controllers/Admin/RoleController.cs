@@ -23,7 +23,7 @@ namespace Forum.Endpoint.Controllers.Admin
         [Route("GetAll")]
         public async Task<List<RoleDto>> GetAll(CancellationToken cancellationToken)
         {
-            return await _roleRepository.GetAllAsync<RoleDto>(cancellationToken);
+            return await _roleRepository.GetAllAsync<RoleDto>(cancellationToken: cancellationToken);
         }
     }
 }

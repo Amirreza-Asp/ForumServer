@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Forum.Domain.Exceptions;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Forum.Application.Utility
@@ -24,7 +25,7 @@ namespace Forum.Application.Utility
 
             var methodCallExpression = sortMethod.Body as MethodCallExpression;
             if (methodCallExpression == null)
-                throw new Exception("Oops");
+                throw new AppException("Oops");
 
             var method = methodCallExpression.Method.GetGenericMethodDefinition();
             var genericSortMethod = method.MakeGenericMethod(typeof(TEntityType), prop.Type);

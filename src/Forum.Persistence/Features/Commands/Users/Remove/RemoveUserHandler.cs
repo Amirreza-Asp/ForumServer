@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Forum.Domain.Exceptions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Forum.Persistence.Features.Commands.Users.Remove
@@ -20,7 +21,7 @@ namespace Forum.Persistence.Features.Commands.Users.Remove
                     .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
-                throw new ApplicationException("UserName is wrong");
+                throw new AppException("UserName is wrong");
 
             user.IsDeleted = true;
             await _context.SaveChangesAsync(cancellationToken);
