@@ -5,7 +5,24 @@
         public int Size { get; set; } = 10;
         public int Page { get; set; } = 1;
         public SortModel[] Sorted { get; set; } = new SortModel[] { };
-        public FilterModel[] Filters { get; set; } = new FilterModel[] { };
+        public List<FilterModel> Filters { get; set; } = new List<FilterModel>();
+
+
+        public void RemoveFilter(String filterColumn)
+        {
+            var filter =
+                Filters
+                    .Where(filter => filter.column == filterColumn)
+                    .FirstOrDefault();
+
+            if (filter != null)
+                Filters.Remove(filter);
+        }
+
+        public void AddFilter(String column, object value)
+        {
+            Filters.Add(new FilterModel { column = column, value = value.ToString() });
+        }
     }
 
     public class FilterModel

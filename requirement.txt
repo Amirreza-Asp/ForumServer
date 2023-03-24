@@ -1,0 +1,2 @@
+حذف عکس community هنگام حذف ان
+تغییر اسم عکس هنگام update community

@@ -1,6 +1,6 @@
 ﻿using Forum.Application.Services;
 using Forum.Domain;
-using Forum.Domain.Entities;
+using Forum.Domain.Entities.Account;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 

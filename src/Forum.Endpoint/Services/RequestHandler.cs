@@ -1,4 +1,4 @@
-﻿using Forum.Application.Services;
+﻿using Forum.Application.Repositories;
 using Forum.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,4 @@
 ﻿using Forum.Domain;
-using Forum.Domain.Entities;
 using Forum.Domain.Entities.Account;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

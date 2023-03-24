@@ -1,6 +1,5 @@
 ﻿using Forum.Application.Services;
 using Forum.Domain;
-using Forum.Domain.Entities;
 using Forum.Domain.Entities.Account;
 using Forum.Domain.Entities.Communications;
 using Microsoft.AspNetCore.Identity;
@@ -40,13 +39,10 @@ namespace Forum.Persistence.Services
 
             if (!await _context.Users.AnyAsync())
             {
-                for (int i = 0; i < 52; i++)
+                foreach (var user in Users)
                 {
-                    foreach (var user in Users)
-                    {
-                        user.UserName = user.UserName + i;
-                        await _userManager.CreateAsync(user, "Pa$$w0rd");
-                    }
+                    user.UserName = user.UserName;
+                    await _userManager.CreateAsync(user, "Pa$$w0rd");
                 }
             }
 
@@ -63,18 +59,14 @@ namespace Forum.Persistence.Services
                 foreach (var role in Roles)
                     await _roleManager.CreateAsync(role);
 
-                //var user = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[0].UserName);
-                //await _userManager.AddToRoleAsync(user, SD.AdminRole);
+                var user = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[0].UserName);
+                await _userManager.AddToRoleAsync(user, SD.AdminRole);
 
-                //var user2 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[1].UserName);
-                //await _userManager.AddToRoleAsync(user2, SD.SuperManagerRole);
+                var user2 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[1].UserName);
+                await _userManager.AddToRoleAsync(user2, SD.SuperManagerRole);
 
-                //var user3 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[2].UserName);
-                //await _userManager.AddToRoleAsync(user3, SD.UserRole);
-
-                var users = await _context.Users.ToListAsync();
-                foreach (var user in users)
-                    await _userManager.AddToRoleAsync(user, SD.AdminRole);
+                var user3 = await _context.Users.FirstOrDefaultAsync(b => b.UserName == Users[2].UserName);
+                await _userManager.AddToRoleAsync(user3, SD.UserRole);
             }
 
             #endregion
@@ -88,11 +80,12 @@ namespace Forum.Persistence.Services
 
             if (!await _context.Topics.AnyAsync())
             {
-                var user = _context.Users.FirstOrDefault(b => b.UserName == "Admin0");
+                var user = _context.Users.FirstOrDefault(b => b.UserName == "Admin");
 
                 var topic1 = new Topic
                 {
                     Id = Guid.NewGuid(),
+                    Content = "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit voluptate cumque reiciendis non minus, odio libero aperiam similique obcaecati est!",
                     Author = user,
                     CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
                     Like = 54,
@@ -103,6 +96,7 @@ namespace Forum.Persistence.Services
                 var topic2 = new Topic
                 {
                     Id = Guid.NewGuid(),
+                    Content = "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit voluptate cumque reiciendis non minus, odio libero aperiam similique obcaecati est!",
                     Author = user,
                     CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
                     Like = 700,
@@ -113,6 +107,7 @@ namespace Forum.Persistence.Services
                 var topic3 = new Topic
                 {
                     Id = Guid.NewGuid(),
+                    Content = "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit voluptate cumque reiciendis non minus, odio libero aperiam similique obcaecati est!",
                     Author = user,
                     CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
                     Like = 852,
@@ -123,6 +118,7 @@ namespace Forum.Persistence.Services
                 var topic4 = new Topic
                 {
                     Id = Guid.NewGuid(),
+                    Content = "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit voluptate cumque reiciendis non minus, odio libero aperiam similique obcaecati est!",
                     Author = user,
                     CommunityId = Guid.Parse("F23449E3-A189-44A6-AE3B-89A9BE1AD73C"),
                     Like = 925,

@@ -1,11 +1,11 @@
 ﻿
 using AutoMapper;
+using Forum.Domain.Dtoes;
 using Forum.Domain.Dtoes.Communities;
 using Forum.Domain.Dtoes.Profile;
 using Forum.Domain.Dtoes.Roles;
 using Forum.Domain.Dtoes.Topics;
 using Forum.Domain.Dtoes.Users;
-using Forum.Domain.Entities;
 using Forum.Domain.Entities.Account;
 using Forum.Domain.Entities.Communications;
 using Forum.Domain.Queries.Account;
@@ -22,6 +22,9 @@ namespace Forum.Infrastructure.Mappings
             CreateMap<Community, Community>();
             CreateMap<Community, CommunitySummary>();
             CreateMap<Community, CommunityDetails>();
+            CreateMap<Community, SelectOption>()
+                .ForMember(b => b.Text, s => s.MapFrom(b => b.Title))
+                .ForMember(b => b.Value, s => s.MapFrom(b => b.Id));
 
             // Account
             CreateMap<AppUser, AppUser>();
@@ -51,8 +54,10 @@ namespace Forum.Infrastructure.Mappings
             // Topics
             CreateMap<Topic, TopicSummary>()
                 .ForMember(b => b.AuthorName, d => d.MapFrom(b => b.Author.FullName))
-                .ForMember(b => b.AuthorPhoto, d => d.MapFrom(b => b.Author.Photos.FirstOrDefault(b => b.IsMain).Url));
+                .ForMember(b => b.AuthorPhoto, d => d.MapFrom(b => b.Author.Photos.FirstOrDefault(b => b.IsMain).Url))
+                .ForMember(b => b.Community, d => d.MapFrom(b => b.Community.Title));
             CreateMap<TopicFile, TopicFile>();
+            CreateMap<Topic, TopicDetails>();
         }
 
     }

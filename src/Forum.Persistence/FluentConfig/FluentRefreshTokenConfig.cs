@@ -1,4 +1,4 @@
-﻿using Forum.Domain.Entities;
+﻿using Forum.Domain.Entities.Account;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

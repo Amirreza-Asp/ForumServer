@@ -12,11 +12,8 @@ namespace Forum.Domain.Entities.Communications
         [Required]
         public String Title { get; set; }
 
-        [ForeignKey(nameof(Author))]
-        public Guid AuthorId { get; set; }
-
-        [ForeignKey(nameof(Community))]
-        public Guid CommunityId { get; set; }
+        [Required]
+        public String Content { get; set; }
 
         [Range(0, int.MaxValue)]
         public int View { get; set; }
@@ -28,6 +25,12 @@ namespace Forum.Domain.Entities.Communications
         public int DisLike { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [ForeignKey(nameof(Author))]
+        public Guid AuthorId { get; set; }
+
+        [ForeignKey(nameof(Community))]
+        public Guid CommunityId { get; set; }
 
         public Community Community { get; set; }
         public AppUser Author { get; set; }

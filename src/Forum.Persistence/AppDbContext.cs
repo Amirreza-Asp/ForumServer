@@ -1,5 +1,4 @@
-﻿using Forum.Domain.Entities;
-using Forum.Domain.Entities.Account;
+﻿using Forum.Domain.Entities.Account;
 using Forum.Domain.Entities.Communications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,8 @@
-﻿using Forum.Application.Services;
+﻿using Forum.Application.Repositories;
+using Forum.Application.Repositories.Communications;
+using Forum.Application.Services;
+using Forum.Persistence.Reposiotories;
+using Forum.Persistence.Reposiotories.Communications;
 using Forum.Persistence.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +24,7 @@ namespace Forum.Persistence
 
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<ITopicRepository, TopicRepository>();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
 

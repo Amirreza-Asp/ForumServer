@@ -71,6 +71,11 @@ namespace Forum.Application.Utility
                     @operator = "Equals";
                     castedPropertyValue = int.Parse(propertyValue);
                 }
+                if (propertyType == typeof(Guid) || propertyType == typeof(Guid?))
+                {
+                    @operator = "Equals";
+                    castedPropertyValue = Guid.Parse(propertyValue);
+                }
                 if (propertyType == typeof(string))
                 {
                     @operator = "Contains";
@@ -86,6 +91,17 @@ namespace Forum.Application.Utility
                 var someValue = Expression.Constant(castedPropertyValue, propertyType);
 
                 if (propertyType == typeof(int?))
+                {
+
+                    MethodInfo methodbool = propertyType.GetMethod(@operator, new[] { propertyType });
+
+                    var convertedSomeValue = Expression.Convert(someValue, typeof(object));
+
+                    var containsMethodExp = Expression.Call(propertyExp, methodbool, convertedSomeValue);
+                    return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp);
+
+                }
+                if (propertyType == typeof(Guid?))
                 {
 
                     MethodInfo methodbool = propertyType.GetMethod(@operator, new[] { propertyType });
