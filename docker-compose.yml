@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+
+  logdb:
+    image: mongo
+
+  maindb:
+    image: mcr.microsoft.com/mssql/server
+
+  forum.endpoint:
+    image: ${DOCKER_REGISTRY-}forumendpoint
+    build:
+      context: .
+      dockerfile: src/Forum.Endpoint/Dockerfile
+
+volumes:
+  mongo_data:

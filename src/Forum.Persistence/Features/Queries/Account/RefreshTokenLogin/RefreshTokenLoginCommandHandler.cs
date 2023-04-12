@@ -4,6 +4,7 @@ using Forum.Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Security.Authentication;
 
 namespace Forum.Persistence.Features.Queries.Account.RefreshTokenLogin
@@ -11,12 +12,14 @@ namespace Forum.Persistence.Features.Queries.Account.RefreshTokenLogin
     public class RefreshTokenLoginCommandHandler : IRequestHandler<RefreshTokenLoginCommand, UserResultDto>
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<RefreshTokenLoginCommandHandler> _logger;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public RefreshTokenLoginCommandHandler(AppDbContext context, SignInManager<AppUser> signInManager)
+        public RefreshTokenLoginCommandHandler(AppDbContext context, SignInManager<AppUser> signInManager, ILogger<RefreshTokenLoginCommandHandler> logger)
         {
             _context = context;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         public async Task<UserResultDto> Handle(RefreshTokenLoginCommand request, CancellationToken cancellationToken)
@@ -25,7 +28,7 @@ namespace Forum.Persistence.Features.Queries.Account.RefreshTokenLogin
                  await _context.RefreshTokens
                     .Where(b => b.Token == request.RefreshToken)
                     .Include(b => b.User)
-                        .ThenInclude(b => b.Photos)
+                        .ThenInclude(b => b.Photo)
                     .FirstOrDefaultAsync(cancellationToken);
 
             if (refreshToken == null)
@@ -49,6 +52,9 @@ namespace Forum.Persistence.Features.Queries.Account.RefreshTokenLogin
 
             _context.Update(refreshToken);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"User {refreshToken.User.UserName} entered at {DateTime.UtcNow} , \t login with refreshToken");
+
 
             return UserResultDto.FromUser(
                     refreshToken.User,

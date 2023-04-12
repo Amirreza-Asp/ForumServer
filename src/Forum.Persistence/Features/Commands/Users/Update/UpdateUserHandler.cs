@@ -1,9 +1,11 @@
-﻿using Forum.Domain.Entities.Account;
+﻿using Forum.Application.Services;
+using Forum.Domain.Entities.Account;
 using Forum.Domain.Exceptions;
 using Forum.Persistence.Features.Notifications.Users.ChangePassowrd;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Forum.Persistence.Features.Commands.Users.Update
 {
@@ -12,12 +14,16 @@ namespace Forum.Persistence.Features.Commands.Users.Update
         private readonly UserManager<AppUser> _userManager;
         private readonly AppDbContext _context;
         private readonly IMediator _mediator;
+        private readonly IUserAccessor _userAccessor;
+        private readonly ILogger<UpdateUserHandler> _logger;
 
-        public UpdateUserHandler(UserManager<AppUser> userManager, AppDbContext context, IMediator mediator)
+        public UpdateUserHandler(UserManager<AppUser> userManager, AppDbContext context, IMediator mediator, ILogger<UpdateUserHandler> logger, IUserAccessor userAccessor)
         {
             _userManager = userManager;
             _context = context;
             _mediator = mediator;
+            _logger = logger;
+            _userAccessor = userAccessor;
         }
 
         public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -51,6 +57,8 @@ namespace Forum.Persistence.Features.Commands.Users.Update
                 await _userManager.RemoveFromRoleAsync(appUser, appUser.UserRole.First().Role.Name);
                 await _userManager.AddToRoleAsync(appUser, request.Role);
             }
+
+            _logger.LogInformation($"User {request.UserName} updated by {_userAccessor.GetUserName()} at {DateTime.UtcNow}");
 
             return Unit.Value;
 

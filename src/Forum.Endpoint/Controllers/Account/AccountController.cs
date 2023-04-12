@@ -2,13 +2,12 @@
 using Forum.Application.Repositories;
 using Forum.Application.Services;
 using Forum.Domain;
-using Forum.Domain.Dtoes.Account;
 using Forum.Domain.Entities.Account;
 using Forum.Domain.Queries.Shared;
 using Forum.Endpoint.Utility;
-using Forum.Infrastructure.Services;
-using Forum.Persistence.Features.Commands.Account.AddImage;
+using Forum.Persistence.Features.Commands.Account.ChangeImage;
 using Forum.Persistence.Features.Commands.Account.Register;
+using Forum.Persistence.Features.Commands.Account.Update;
 using Forum.Persistence.Features.Queries.Account.Login;
 using Forum.Persistence.Features.Queries.Account.RefreshTokenLogin;
 using Microsoft.AspNetCore.Authorization;
@@ -66,26 +65,21 @@ namespace Forum.Endpoint.Controllers.Account
         }
 
 
-
-        [Route("Current")]
-        [HttpGet]
+        [HttpPut]
+        [Route("Update")]
         [Authorize]
-        public async Task<IActionResult> Current(CancellationToken cancellationToken)
+        public async Task<IActionResult> Update([FromBody] UpdateAccountCommand command, CancellationToken cancellationToken)
         {
-            var id = _userAccessor.GetId();
-
-            var user = await _userRepository.FirstOrDefaultAsync<AppUser>(u => u.Id == id, cancellationToken);
-            return Ok(ConvertToUserResult(user));
+            return await Mediator.HandleAsync(command, cancellationToken);
         }
 
-
         #region images
-        [Route("Image")]
         [HttpPost]
+        [Route("ChangePhoto")]
         [Authorize]
-        public async Task<IActionResult> AddImage(IFormFile command, CancellationToken cancellationToken)
+        public async Task<IActionResult> ChangePhoto([FromForm] ChangeImageCommand command, CancellationToken cancellationToken)
         {
-            return Ok(await Mediator.Send(new AddImageCommand { File = command }, cancellationToken));
+            return await Mediator.HandleAsync(command, cancellationToken);
         }
 
         [Route("Image")]
@@ -94,7 +88,7 @@ namespace Forum.Endpoint.Controllers.Account
         {
             string upload = _hostEnv.WebRootPath;
             string path = $"{upload}{SD.UserPhotoPath}{query.Name}";
-            var image = await _photoManager.ResizeAsync(path, query.Width, query.Height);
+            var image = await _photoManager.ResizeAsync(path, query.Width, query.Height, cancellationToken);
             string extension = Path.GetExtension(query.Name);
 
             return File(image, $"image/{extension.Substring(1)}");
@@ -102,18 +96,5 @@ namespace Forum.Endpoint.Controllers.Account
 
         #endregion
 
-
-
-        private UserResultDto ConvertToUserResult(AppUser user)
-        {
-            return new UserResultDto
-            {
-                UserName = user.UserName,
-                Email = user.Email,
-                FullName = user.FullName,
-                Image = user.Photos.FirstOrDefault()?.Url,
-                Token = TokenService.Create(user)
-            };
-        }
     }
 }

@@ -3,6 +3,7 @@ using Forum.Domain;
 using Forum.Domain.Entities.Account;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Forum.Persistence.Features.Commands.Account.AddImage
 {
@@ -12,13 +13,15 @@ namespace Forum.Persistence.Features.Commands.Account.AddImage
         private readonly AppDbContext _context;
         private readonly IHostingEnvironment _hostEnv;
         private readonly IUserAccessor _userAccessor;
+        private readonly ILogger<AddImageCommandHandler> _logger;
 
-        public AddImageCommandHandler(IPhotoManager photoManager, IHostingEnvironment hostEnv, AppDbContext context, IUserAccessor userAccessor)
+        public AddImageCommandHandler(IPhotoManager photoManager, IHostingEnvironment hostEnv, AppDbContext context, IUserAccessor userAccessor, ILogger<AddImageCommandHandler> logger)
         {
             _photoManager = photoManager;
             _hostEnv = hostEnv;
             _context = context;
             _userAccessor = userAccessor;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(AddImageCommand request, CancellationToken cancellationToken)
@@ -41,6 +44,8 @@ namespace Forum.Persistence.Features.Commands.Account.AddImage
 
                 String imgPath = upload + SD.UserPhotoPath + photo.Url;
                 await _photoManager.SaveAsync(request.File, imgPath, cancellationToken);
+
+                _logger.LogInformation($"User {_userAccessor.GetUserName()} change image at {DateTime.UtcNow}");
             }
 
             return Unit.Value;

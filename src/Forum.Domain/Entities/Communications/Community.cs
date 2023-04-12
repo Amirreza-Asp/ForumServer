@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Forum.Domain.Entities.Account;
+using System.ComponentModel.DataAnnotations;
 
 namespace Forum.Domain.Entities.Communications
 {
@@ -21,6 +22,7 @@ namespace Forum.Domain.Entities.Communications
         [Required]
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
+        public CommunityManager Manager { get; set; }
         public ICollection<Topic> Topics { get; set; } = new List<Topic>();
     }
 }

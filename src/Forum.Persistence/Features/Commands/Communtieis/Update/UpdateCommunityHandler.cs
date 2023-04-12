@@ -4,6 +4,7 @@ using Forum.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Forum.Persistence.Features.Commands.Communtieis.Update
 {
@@ -12,18 +13,26 @@ namespace Forum.Persistence.Features.Commands.Communtieis.Update
         private readonly AppDbContext _context;
         private readonly IHostingEnvironment _hostEnv;
         private readonly IPhotoManager _photoManager;
+        private readonly ILogger<UpdateCommunityHandler> _logger;
+        private readonly IUserAccessor _userAccessor;
 
-        public UpdateCommunityHandler(AppDbContext context, IHostingEnvironment hostEnv, IPhotoManager photoManager)
+        public UpdateCommunityHandler(AppDbContext context, IHostingEnvironment hostEnv, IPhotoManager photoManager, ILogger<UpdateCommunityHandler> logger, IUserAccessor userAccessor)
         {
             _context = context;
             _hostEnv = hostEnv;
             _photoManager = photoManager;
+            _logger = logger;
+            _userAccessor = userAccessor;
         }
 
         public async Task<Unit> Handle(UpdateCommunityCommand request, CancellationToken cancellationToken)
         {
             if (!await _context.Communities.AnyAsync(b => b.Id == request.Id))
+            {
+                _logger.LogWarning($"User {_userAccessor.GetUserName()} wanted to edit a community at {DateTime.UtcNow} , " +
+                    $"but community with entered id is not found");
                 throw new AppException("Community not found");
+            }
 
             var community =
                 await _context.Communities
@@ -58,6 +67,8 @@ namespace Forum.Persistence.Features.Commands.Communtieis.Update
             }
 
             await _context.SaveChangesAsync();
+            _logger.LogInformation($"User {_userAccessor.GetUserName()} update Community {request.Title} with at {request.Id}");
+
             return Unit.Value;
         }
     }

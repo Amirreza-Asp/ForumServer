@@ -3,21 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Forum.Domain.Entities.Communications
 {
-    public class TopicFile
+    public class CommentReaction
     {
         [Key]
         public Guid Id { get; set; }
 
         [Required]
-        public String Name { get; set; }
+        public String By { get; set; }
 
         [Required]
-        public String Url { get; set; }
+        public Feeling Feeling { get; set; }
 
-        [ForeignKey(nameof(Topic))]
-        public Guid TopicId { get; set; }
-
-
-        public Topic Topic { get; set; }
+        public Guid CommentId { get; set; }
+        [ForeignKey(nameof(CommentId))]
+        public Comment Comment { get; set; }
     }
 }

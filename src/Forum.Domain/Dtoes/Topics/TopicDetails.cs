@@ -10,8 +10,8 @@
         public int DisLike { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public String AuthorId { get; set; }
-        public String CommunityId { get; set; }
+        public Guid AuthorId { get; set; }
+        public Guid CommunityId { get; set; }
 
 
     }

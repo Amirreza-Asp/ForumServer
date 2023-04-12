@@ -34,6 +34,8 @@ namespace Forum.Domain.Entities.Communications
 
         public Community Community { get; set; }
         public AppUser Author { get; set; }
-        public ICollection<TopicFile> Files { get; set; } = new List<TopicFile>();
+        public ICollection<FeelingTopic> Feelings { get; set; } = new List<FeelingTopic>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     }
 }

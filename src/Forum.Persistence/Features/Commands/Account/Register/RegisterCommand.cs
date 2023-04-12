@@ -25,6 +25,7 @@ namespace Forum.Persistence.Features.Commands.Account.Register
 
         public String Role { get; set; }
 
+        public String Photo { get; set; }
 
         [DataType(DataType.EmailAddress)]
         public String Email { get; set; }

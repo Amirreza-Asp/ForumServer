@@ -137,6 +137,9 @@ namespace Forum.Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("RegisterAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -239,6 +242,28 @@ namespace Forum.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Forum.Domain.Entities.Account.CommunityManager", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CommunityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId")
+                        .IsUnique();
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("CommunityManager");
+                });
+
             modelBuilder.Entity("Forum.Domain.Entities.Account.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -271,9 +296,6 @@ namespace Forum.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -287,9 +309,70 @@ namespace Forum.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserPhotos");
+                });
+
+            modelBuilder.Entity("Forum.Domain.Entities.Communications.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisLike")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Like")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ReadByAuthor")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TopicId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Forum.Domain.Entities.Communications.CommentReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("By")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Feeling")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.ToTable("CommentReactions");
                 });
 
             modelBuilder.Entity("Forum.Domain.Entities.Communications.Community", b =>
@@ -319,6 +402,28 @@ namespace Forum.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Communities");
+                });
+
+            modelBuilder.Entity("Forum.Domain.Entities.Communications.FeelingTopic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("By")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Feeling")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TopicId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("FeelingTopic");
                 });
 
             modelBuilder.Entity("Forum.Domain.Entities.Communications.Topic", b =>
@@ -360,30 +465,6 @@ namespace Forum.Persistence.Migrations
                     b.HasIndex("CommunityId");
 
                     b.ToTable("Topics");
-                });
-
-            modelBuilder.Entity("Forum.Domain.Entities.Communications.TopicFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TopicId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("TopicFiles");
                 });
 
             modelBuilder.Entity("Forum.Domain.Entities.Account.AppRoleClaim", b =>
@@ -441,6 +522,25 @@ namespace Forum.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Forum.Domain.Entities.Account.CommunityManager", b =>
+                {
+                    b.HasOne("Forum.Domain.Entities.Communications.Community", "Community")
+                        .WithOne("Manager")
+                        .HasForeignKey("Forum.Domain.Entities.Account.CommunityManager", "CommunityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Forum.Domain.Entities.Account.AppUser", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Community");
+
+                    b.Navigation("Manager");
+                });
+
             modelBuilder.Entity("Forum.Domain.Entities.Account.RefreshToken", b =>
                 {
                     b.HasOne("Forum.Domain.Entities.Account.AppUser", "User")
@@ -455,12 +555,53 @@ namespace Forum.Persistence.Migrations
             modelBuilder.Entity("Forum.Domain.Entities.Account.UserPhoto", b =>
                 {
                     b.HasOne("Forum.Domain.Entities.Account.AppUser", "User")
-                        .WithMany("Photos")
-                        .HasForeignKey("UserId")
+                        .WithOne("Photo")
+                        .HasForeignKey("Forum.Domain.Entities.Account.UserPhoto", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Forum.Domain.Entities.Communications.Comment", b =>
+                {
+                    b.HasOne("Forum.Domain.Entities.Account.AppUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Forum.Domain.Entities.Communications.Topic", "Topic")
+                        .WithMany("Comments")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Topic");
+                });
+
+            modelBuilder.Entity("Forum.Domain.Entities.Communications.CommentReaction", b =>
+                {
+                    b.HasOne("Forum.Domain.Entities.Communications.Comment", "Comment")
+                        .WithMany("Reactions")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+                });
+
+            modelBuilder.Entity("Forum.Domain.Entities.Communications.FeelingTopic", b =>
+                {
+                    b.HasOne("Forum.Domain.Entities.Communications.Topic", "Topic")
+                        .WithMany("Feelings")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Topic");
                 });
 
             modelBuilder.Entity("Forum.Domain.Entities.Communications.Topic", b =>
@@ -482,17 +623,6 @@ namespace Forum.Persistence.Migrations
                     b.Navigation("Community");
                 });
 
-            modelBuilder.Entity("Forum.Domain.Entities.Communications.TopicFile", b =>
-                {
-                    b.HasOne("Forum.Domain.Entities.Communications.Topic", "Topic")
-                        .WithMany("Files")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-                });
-
             modelBuilder.Entity("Forum.Domain.Entities.Account.AppRole", b =>
                 {
                     b.Navigation("UserRole");
@@ -500,21 +630,30 @@ namespace Forum.Persistence.Migrations
 
             modelBuilder.Entity("Forum.Domain.Entities.Account.AppUser", b =>
                 {
-                    b.Navigation("Photos");
+                    b.Navigation("Photo");
 
                     b.Navigation("RefreshToken");
 
                     b.Navigation("UserRole");
                 });
 
+            modelBuilder.Entity("Forum.Domain.Entities.Communications.Comment", b =>
+                {
+                    b.Navigation("Reactions");
+                });
+
             modelBuilder.Entity("Forum.Domain.Entities.Communications.Community", b =>
                 {
+                    b.Navigation("Manager");
+
                     b.Navigation("Topics");
                 });
 
             modelBuilder.Entity("Forum.Domain.Entities.Communications.Topic", b =>
                 {
-                    b.Navigation("Files");
+                    b.Navigation("Comments");
+
+                    b.Navigation("Feelings");
                 });
 #pragma warning restore 612, 618
         }

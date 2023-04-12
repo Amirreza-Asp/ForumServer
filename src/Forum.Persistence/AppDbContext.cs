@@ -16,7 +16,10 @@ namespace Forum.Persistence
         public DbSet<UserPhoto> UserPhotos { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Topic> Topics { get; set; }
-        public DbSet<TopicFile> TopicFiles { get; set; }
+        public DbSet<FeelingTopic> FeelingTopic { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<CommentReaction> CommentReactions { get; set; }
+        public DbSet<CommunityManager> CommunityManager { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

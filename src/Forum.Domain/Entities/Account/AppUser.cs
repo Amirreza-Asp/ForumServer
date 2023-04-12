@@ -17,12 +17,15 @@ namespace Forum.Domain.Entities.Account
 
         public bool IsMale { get; set; }
 
+        [Required]
         public bool IsDeleted { get; set; }
+
+        public DateTime RegisterAt { get; set; } = DateTime.UtcNow;
 
         [NotMapped]
         public string FullName => string.Concat(Name, " ", Family);
 
-        public ICollection<UserPhoto> Photos { get; set; } = new List<UserPhoto>();
+        public UserPhoto Photo { get; set; }
         public RefreshToken RefreshToken { get; set; }
         public ICollection<AppUserRole> UserRole { get; set; } = new List<AppUserRole>();
     }

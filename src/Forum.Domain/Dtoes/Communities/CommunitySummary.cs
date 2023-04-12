@@ -6,6 +6,7 @@
         public String Title { get; set; }
         public String Icon { get; set; }
         public String Image { get; set; }
+        public String Manager { get; set; }
         public DateTime CreateAt { get; set; }
     }
 }

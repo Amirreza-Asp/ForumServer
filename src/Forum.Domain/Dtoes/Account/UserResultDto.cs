@@ -7,8 +7,13 @@ namespace Forum.Domain.Dtoes.Account
         public String UserName { get; set; }
         public String FullName { get; set; }
         public String Email { get; set; }
+        public String PhoneNumber { get; set; }
+        public String Name { get; set; }
+        public String Family { get; set; }
         public String Image { get; set; }
         public String Token { get; set; }
+        public bool IsMale { get; set; }
+        public DateTime Age { get; set; }
         public Guid RefreshToken { get; set; }
         public String Role { get; set; }
 
@@ -17,8 +22,13 @@ namespace Forum.Domain.Dtoes.Account
             {
                 UserName = user.UserName,
                 FullName = user.FullName,
+                Name = user.Name,
+                PhoneNumber = user.PhoneNumber,
+                Age = user.Age,
+                Family = user.Family,
+                IsMale = user.IsMale,
                 Email = user.Email,
-                Image = user.Photos.FirstOrDefault(b => b.IsMain)?.Url,
+                Image = user.Photo != null ? user.Photo?.Url : "",
                 Token = token,
                 RefreshToken = refreshToken,
                 Role = role

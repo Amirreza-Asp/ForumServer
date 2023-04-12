@@ -18,5 +18,11 @@ namespace Forum.Infrastructure.Services
         {
             return Guid.Parse(_contextAccessor.HttpContext.User.FindFirstValue(AppClaim.Id));
         }
+
+        public string GetUserName()
+        {
+            return _contextAccessor.HttpContext.User.FindFirstValue(AppClaim.UserName);
+        }
+
     }
 }

@@ -22,6 +22,8 @@ namespace Forum.Application.Repositories
 
         Task<List<TDto>> GetAllAsync<TDto>(Expression<Func<TEntity, bool>> filters = null, CancellationToken cancellationToken = default);
 
+        Task<int> CountAsync(CancellationToken cancellationToken);
+
         void Create(TEntity entity);
         void Update(TEntity entity);
 

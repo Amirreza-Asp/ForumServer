@@ -2,8 +2,6 @@
 using Forum.Application.Repositories;
 using Forum.Domain.Dtoes.Profile;
 using Forum.Domain.Entities.Account;
-using Forum.Endpoint.Utility;
-using Forum.Persistence.Features.Queries.Account.AllImages;
 using Forum.Persistence.Features.Queries.Profile.ProfileDetails;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,12 +32,5 @@ namespace Forum.Endpoint.Controllers.Account
             return await Mediator.Send(query, cancellationToken);
         }
 
-
-        [Route("AllImages")]
-        [HttpGet]
-        public async Task<IActionResult> AllImages([FromQuery] AllImagesQuery query, CancellationToken cancellationToken)
-        {
-            return await Mediator.HandleAsync(query, cancellationToken);
-        }
     }
 }

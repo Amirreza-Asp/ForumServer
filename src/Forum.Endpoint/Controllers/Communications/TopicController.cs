@@ -3,8 +3,10 @@ using Forum.Application.Repositories.Communications;
 using Forum.Domain.Dtoes.Topics;
 using Forum.Endpoint.Utility;
 using Forum.Persistence.Features.Commands.Topics.Create;
+using Forum.Persistence.Features.Commands.Topics.Interest;
 using Forum.Persistence.Features.Commands.Topics.Remove;
 using Forum.Persistence.Features.Commands.Topics.Update;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forum.Endpoint.Controllers.Admin
@@ -56,5 +58,14 @@ namespace Forum.Endpoint.Controllers.Admin
         {
             return await Mediator.HandleAsync(command, cancellationToken);
         }
+
+        [Route("Interest")]
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> Interest([FromBody] FeelingCommand command, CancellationToken cancellationToken)
+        {
+            return await Mediator.HandleAsync(command, cancellationToken);
+        }
+
     }
 }

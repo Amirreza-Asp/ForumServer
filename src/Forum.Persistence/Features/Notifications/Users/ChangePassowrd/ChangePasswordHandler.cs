@@ -2,6 +2,7 @@
 using Forum.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace Forum.Persistence.Features.Notifications.Users.ChangePassowrd
 {
@@ -9,11 +10,13 @@ namespace Forum.Persistence.Features.Notifications.Users.ChangePassowrd
     {
         private readonly AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ILogger<ChangePasswordNotif> _logger;
 
-        public ChangePasswordHandler(AppDbContext context, UserManager<AppUser> userManager)
+        public ChangePasswordHandler(AppDbContext context, UserManager<AppUser> userManager, ILogger<ChangePasswordNotif> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task Handle(ChangePasswordNotif notification, CancellationToken cancellationToken)
@@ -31,7 +34,9 @@ namespace Forum.Persistence.Features.Notifications.Users.ChangePassowrd
             notification.User.PasswordHash = _userManager.PasswordHasher.HashPassword(notification.User, notification.Password);
 
             _context.Users.Update(notification.User);
+
             await _context.SaveChangesAsync();
+            _logger.LogInformation($"User {notification.User.UserName} updated password at {DateTime.UtcNow}");
         }
     }
 }

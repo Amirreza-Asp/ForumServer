@@ -3,5 +3,7 @@
     public interface IUserAccessor
     {
         Guid GetId();
+        String GetUserName();
+
     }
 }

@@ -14,8 +14,6 @@ namespace Forum.Domain.Entities.Account
         [Required]
         public string Url { get; set; }
 
-        public bool IsMain { get; set; }
-
         public Guid UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public AppUser User { get; set; }

@@ -94,12 +94,10 @@ namespace Forum.Persistence.Reposiotories
             return actionResult;
         }
 
-
         public void Create(TEntity entity)
         {
             _dbSet.Add(entity);
         }
-
 
         public void Update(TEntity entity)
         {
@@ -137,6 +135,11 @@ namespace Forum.Persistence.Reposiotories
                     .Where(filters)
                     .ProjectTo<TDto>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
+        }
+
+        public async Task<int> CountAsync(CancellationToken cancellationToken)
+        {
+            return await _dbSet.CountAsync(cancellationToken);
         }
     }
 }

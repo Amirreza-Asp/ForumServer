@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+
+  logdb:
+    container_name: logdb
+    restart: always
+    ports:
+        - "27017:27017"
+    volumes:
+        - mongo_data:/data/db
+
+  maindb:
+    container_name: maindb
+    environment:
+      SA_PASSWORD: "SwN12345678"
+      ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+      - "1433:1433"
+
+  forum.endpoint:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      - "80"
+      - "443"
+    depends_on:
+      - logdb
+      - maindb
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

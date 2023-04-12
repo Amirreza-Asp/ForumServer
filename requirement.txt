@@ -1,2 +1,3 @@
-حذف عکس community هنگام حذف ان
-تغییر اسم عکس هنگام update community
+تغییر تعداد کامنت ها در TopicCard
+افزودن عکس به register و add user
+log گذاری سیستم در server

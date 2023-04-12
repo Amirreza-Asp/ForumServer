@@ -3,6 +3,7 @@ using Forum.Domain;
 using Forum.Domain.Entities.Communications;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Forum.Persistence.Features.Commands.Communtieis.Create
 {
@@ -11,12 +12,16 @@ namespace Forum.Persistence.Features.Commands.Communtieis.Create
         private readonly IPhotoManager _photoManager;
         private readonly AppDbContext _context;
         private readonly IHostingEnvironment _hostEnv;
+        private readonly ILogger<CreateCommunityHandler> _logger;
+        private readonly IUserAccessor _userAccessor;
 
-        public CreateCommunityHandler(AppDbContext context, IPhotoManager photoManager, IHostingEnvironment hostEnv)
+        public CreateCommunityHandler(AppDbContext context, IPhotoManager photoManager, IHostingEnvironment hostEnv, ILogger<CreateCommunityHandler> logger, IUserAccessor userAccessor)
         {
             _context = context;
             _photoManager = photoManager;
             _hostEnv = hostEnv;
+            _logger = logger;
+            _userAccessor = userAccessor;
         }
 
         public async Task<Unit> Handle(CreateCommunityCommand request, CancellationToken cancellationToken)
@@ -42,6 +47,8 @@ namespace Forum.Persistence.Features.Commands.Communtieis.Create
             {
                 await _photoManager.SaveFromBase64Async(request.Image, imgPath, cancellationToken);
                 await _photoManager.SaveFromBase64Async(request.Icon, iconPath, cancellationToken);
+
+                _logger.LogInformation($"Community {community.Title} created in {DateTime.UtcNow} by {_userAccessor.GetUserName()}");
             }
 
             return Unit.Value;
