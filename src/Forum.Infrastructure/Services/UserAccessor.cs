@@ -16,7 +16,12 @@ namespace Forum.Infrastructure.Services
 
         public Guid GetId()
         {
-            return Guid.Parse(_contextAccessor.HttpContext.User.FindFirstValue(AppClaim.Id));
+            var id = _contextAccessor.HttpContext.User.FindFirstValue(AppClaim.Id);
+
+            if (String.IsNullOrEmpty(id))
+                return Guid.Empty;
+
+            return Guid.Parse(id);
         }
 
         public string GetUserName()

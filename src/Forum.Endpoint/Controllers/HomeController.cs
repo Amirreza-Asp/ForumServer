@@ -4,6 +4,7 @@ using Forum.Persistence.Features.Queries.Home.CommunityPresentation;
 using Forum.Persistence.Features.Queries.Home.CommunityTopics;
 using Forum.Persistence.Features.Queries.Home.FindTopic;
 using Forum.Persistence.Features.Queries.Home.MainTopics;
+using Forum.Persistence.Features.Queries.Home.TopContributors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forum.Endpoint.Controllers
@@ -43,6 +44,13 @@ namespace Forum.Endpoint.Controllers
         [Route("MainTopics")]
         [HttpGet]
         public async Task<IActionResult> MainTopics([FromQuery] MainTopicsQuery query, CancellationToken cancellationToken)
+        {
+            return await Mediator.HandleAsync(query, cancellationToken);
+        }
+
+        [Route("TopContributors")]
+        [HttpGet]
+        public async Task<IActionResult> TopContributors([FromQuery] TopContributorsQuery query, CancellationToken cancellationToken)
         {
             return await Mediator.HandleAsync(query, cancellationToken);
         }

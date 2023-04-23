@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Forum.Domain.Entities.Communications;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,8 +26,11 @@ namespace Forum.Domain.Entities.Account
         [NotMapped]
         public string FullName => string.Concat(Name, " ", Family);
 
+
         public UserPhoto Photo { get; set; }
         public RefreshToken RefreshToken { get; set; }
         public ICollection<AppUserRole> UserRole { get; set; } = new List<AppUserRole>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<Topic> Topics { get; set; } = new List<Topic>();
     }
 }

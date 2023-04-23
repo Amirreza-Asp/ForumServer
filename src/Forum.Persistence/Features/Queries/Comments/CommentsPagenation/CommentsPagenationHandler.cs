@@ -25,15 +25,17 @@ namespace Forum.Persistence.Features.Queries.Comments.CommentsPagenation
             var data =
                 await _context.Comments
                     .Where(b => b.TopicId == request.TopicId)
+                    .Include(b => b.Author)
+                        .ThenInclude(b => b.Photo)
                     .OrderBy(b => b.CreatedAt)
                     .Skip((request.Page - 1) * request.Size)
                     .Take(request.Size)
-                    .AsNoTracking()
                     .ToListAsync(cancellationToken);
 
             var authorId =
                 await _context.Topics
                     .Where(b => b.Id == request.TopicId)
+                    .AsNoTracking()
                     .Select(b => b.AuthorId)
                     .FirstOrDefaultAsync(cancellationToken);
 
@@ -42,14 +44,11 @@ namespace Forum.Persistence.Features.Queries.Comments.CommentsPagenation
             {
                 foreach (var item in data)
                 {
-                    var statusBeforeUpdate = item.ReadByAuthor;
                     item.ReadByAuthor = true;
-
-                    if (!statusBeforeUpdate)
-                        _context.Comments.Update(item);
                 }
-                await _context.SaveChangesAsync(cancellationToken);
             }
+
+            await _context.SaveChangesAsync(cancellationToken);
 
             var total =
                 await _context.Comments

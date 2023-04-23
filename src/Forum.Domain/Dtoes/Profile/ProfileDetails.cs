@@ -11,6 +11,10 @@
         public bool IsMale { get; set; }
         public DateTime Age { get; set; }
 
+
+        public int CommentsCount { get; set; }
+        public int TopicsCount { get; set; }
+
         public PhotoDetails Photo { get; set; }
     }
 

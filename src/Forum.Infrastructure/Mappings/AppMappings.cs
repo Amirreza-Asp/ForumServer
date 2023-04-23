@@ -42,7 +42,10 @@ namespace Forum.Infrastructure.Mappings
                 .ForMember(entity => entity.PasswordHash, dto => dto.MapFrom(b => ""));
 
             // Profile
-            CreateMap<AppUser, ProfileDetails>();
+            CreateMap<AppUser, ProfileDetails>()
+                  .ForMember(b => b.CommentsCount, c => c.MapFrom(b => b.Comments.Count()))
+                  .ForMember(b => b.TopicsCount, c => c.MapFrom(b => b.Topics.Count()));
+
             CreateMap<UserPhoto, PhotoDetails>();
 
 
@@ -58,6 +61,10 @@ namespace Forum.Infrastructure.Mappings
                 .ForMember(dto => dto.Role, entity => entity.MapFrom(b => b.UserRole.Any() ? b.UserRole.First().Role.Name : ""));
             CreateMap<AppUser, UserDetails>()
                .ForMember(dto => dto.Role, entity => entity.MapFrom(b => b.UserRole.Any() ? b.UserRole.First().Role.Name : ""));
+            CreateMap<AppUser, TopContributorsDto>()
+                .ForMember(b => b.FullName, entity => entity.MapFrom(b => b.Name + " " + b.Family))
+                .ForMember(b => b.TopicsCount, entity => entity.MapFrom(b => b.Topics.Count()))
+                .ForMember(b => b.Image, entity => entity.MapFrom(b => b.Photo.Url));
 
             // Topics
             CreateMap<Topic, TopicSummary>()
@@ -87,6 +94,10 @@ namespace Forum.Infrastructure.Mappings
                 .ForMember(b => b.Reaction, b =>
                     b.MapFrom(d => d.Reactions.Any(b => b.By == userAccessor.GetUserName()) ?
                         d.Reactions.First(b => b.By == userAccessor.GetUserName()).Feeling == Feeling.Like ? "like" : "dislike" : ""));
+
+            CreateMap<Comment, UnreadCommentSummary>()
+                .ForMember(b => b.TopicId, d => d.MapFrom(b => b.Topic.Id))
+                .ForMember(b => b.TopicTitle, d => d.MapFrom(b => b.Topic.Title));
         }
 
     }

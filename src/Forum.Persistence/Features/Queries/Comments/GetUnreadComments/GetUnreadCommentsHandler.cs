@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Forum.Application.Models;
 using Forum.Application.Services;
 using Forum.Domain.Dtoes.Comments;
 using MediatR;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Forum.Persistence.Features.Queries.Comments.GetUnreadComments
 {
-    public class GetUnreadCommentsHandler : IRequestHandler<GetUnreadCommentsQuery, List<CommentSummary>>
+    public class GetUnreadCommentsHandler : IRequestHandler<GetUnreadCommentsQuery, ListActionResult<UnreadCommentSummary>>
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
@@ -19,7 +20,7 @@ namespace Forum.Persistence.Features.Queries.Comments.GetUnreadComments
             _userAccessor = userAccessor;
         }
 
-        public async Task<List<CommentSummary>> Handle(GetUnreadCommentsQuery request, CancellationToken cancellationToken)
+        public async Task<ListActionResult<UnreadCommentSummary>> Handle(GetUnreadCommentsQuery request, CancellationToken cancellationToken)
         {
             var data =
                 await _context.Comments
@@ -27,21 +28,39 @@ namespace Forum.Persistence.Features.Queries.Comments.GetUnreadComments
                         b.Topic.AuthorId == _userAccessor.GetId() &&
                         b.ReadByAuthor == false &&
                         b.AuthorId != _userAccessor.GetId())
-                    .AsNoTracking()
+                    .Include(b => b.Author)
+                        .ThenInclude(b => b.Photo)
+                    .Include(b => b.Topic)
+                    .OrderByDescending(b => b.CreatedAt)
+                    .Skip((request.Page - 1) * request.Size)
+                    .Take(request.Size)
                     .ToListAsync(cancellationToken);
+
+            var total =
+                await _context.Comments
+                    .Where(b =>
+                        b.Topic.AuthorId == _userAccessor.GetId() &&
+                        b.ReadByAuthor == false &&
+                        b.AuthorId != _userAccessor.GetId())
+                    .CountAsync(cancellationToken);
 
             if (data.Any())
             {
                 foreach (var item in data)
                 {
                     item.ReadByAuthor = true;
-                    _context.Comments.Update(item);
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
-            return _mapper.Map<List<CommentSummary>>(data);
+            return new ListActionResult<UnreadCommentSummary>
+            {
+                Data = _mapper.Map<List<UnreadCommentSummary>>(data),
+                Total = total,
+                Page = request.Page,
+                Size = request.Size
+            };
         }
     }
 }
